@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cli-table": "^0.3.5",
     "inquirer": "^8.0.0",
     "mysql": "^2.18.1",
     "node": "^15.8.0"
