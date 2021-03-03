@@ -150,7 +150,7 @@ const promptEmployeeRole = () => {
 const promptAddEmployee = () => {
   inquirer.prompt([
     {
-
+      
     },
     {
       type: 'list',
