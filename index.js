@@ -9,13 +9,14 @@ const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'myrootPassword2',
+  password: '',
   database: 'employees_db',
 });
 
 connection.connect((err) => {
   if (err) throw err;
   console.log(`connected as id ${connection.threadId}`);
+  getTableData();
   queryTable();
 })
 
@@ -68,6 +69,13 @@ const filterTable = (filterBy, keyword) => {
 
     console.log(table.toString());
     promptUser();
+  });
+}
+
+const insertTable = (firstName, lastName, roleID, managerID) => {
+    // INSERT INTO employee_table(first_name, last_name, role_id, manager_id) VALUES ('Tammer', 'Galal', 4, 4);
+    connection.query(`INSERT INTO employee_table(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [firstName, lastName, roleID, managerID], (err, res) => {
+    if (err) throw err;
   });
 }
 
@@ -147,20 +155,69 @@ const promptEmployeeRole = () => {
   });  
 }
 
+let employeeList = [];
+let employeeData = [];
+let rolesData = [];
+const getTableData = () => {
+  connection.query('select * from employee_table', (err, res) => {
+    if (err) throw err;
+    res.forEach(item => {
+      employeeData.push(item);
+      employeeList.push(item.first_name);
+    });
+    // console.log(employeeData);
+  })
+  connection.query('select * from role_table', (err, res) => {
+    if (err) throw err;
+    res.forEach(item => {
+      rolesData.push(item);
+    });
+    // console.log(rolesData);
+  })
+}
+
 const promptAddEmployee = () => {
   inquirer.prompt([
     {
-      
+      type: 'input',
+      name: 'firstName',
+      message: "Enter employee's first name",
+    },
+    {
+      type: 'input',
+      name: 'lastName',
+      message: "Enter employee's last name",
     },
     {
       type: 'list',
-      name: 'choice',
-      message: 'What would you like to do?',
+      name: 'selectRole',
+      message: 'Select role title of the employee',
       choices: roleList,
+    },
+    {
+      type: 'list',
+      name: 'selectManager',
+      message: "Select employee's Manager",
+      choices: employeeList,
     },
   ]).then(ans => {
     // console.log(JSON.stringify(ans, null, ' '));
-    filterTable('role_title', ans.choice)
+    let selectRoleID;
+    let selectManagerID;
+    rolesData.forEach(item => {
+      if (ans.selectRole == item.role_title) {
+        selectRoleID = item.role_id;
+        // console.log(selectRoleID);
+      }
+    });
+    employeeData.forEach(item => {
+      if (ans.selectManager == item.first_name) {
+        selectManagerID = item.employee_id;
+        // console.log(selectManagerID);
+      }
+    });
+    insertTable(ans.firstName, ans.lastName, selectRoleID, selectManagerID);
+    queryTable();
   });  
 }
 
