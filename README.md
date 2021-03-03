@@ -18,7 +18,7 @@ Employee_Tracker is a command-line application connected to MySQL database which
 npm install
 node index.js
 ```
-![display](#)
+![display](https://raw.githubusercontent.com/MushtaqSafie/Employee-Tracker/main/media/display.gif)
 
 ## License
 This application is covered under the MIT License.
