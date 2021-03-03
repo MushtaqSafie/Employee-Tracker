@@ -79,6 +79,13 @@ const insertTable = (firstName, lastName, roleID, managerID) => {
   });
 }
 
+const deleteEmployee = (keyword) => {
+    // DELETE FROM employee_table WHERE employee_id = 13;
+    connection.query(`DELETE FROM employee_table WHERE employee_id = ?`, [keyword], (err, res) => {
+    if (err) throw err;
+  });
+}
+
 const promptUser = () => {
   inquirer.prompt([
     {
@@ -114,7 +121,7 @@ const promptUser = () => {
         break;
 
       case 'Remove Employee':
-
+        promptEmployeeRemoval();
         break;
 
       case 'Update Employee Role':
@@ -217,6 +224,29 @@ const promptAddEmployee = () => {
       }
     });
     insertTable(ans.firstName, ans.lastName, selectRoleID, selectManagerID);
+    queryTable();
+  });  
+}
+
+const promptEmployeeRemoval = () => {
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'selectEmployee',
+      message: "Which employee would like to remove?",
+      choices: employeeList,
+    },
+  ]).then(ans => {
+    // console.log(JSON.stringify(ans, null, ' '));
+
+    let selectEmployeeID;
+    employeeData.forEach(item => {
+      if (ans.selectEmployee == item.first_name) {
+        selectEmployeeID = item.employee_id;
+        // console.log(selectManagerID);
+      }
+    });
+    deleteEmployee(selectEmployeeID);
     queryTable();
   });  
 }
