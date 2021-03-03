@@ -20,6 +20,7 @@ connection.connect((err) => {
 })
 
 const queryTable = () => {
+  console.clear();
   let query = `SELECT employee_id, first_name, last_name, role_title, salary, department_name FROM employee_table AS tOne
   LEFT JOIN role_table AS tTwo
   ON tOne.role_id = tTwo.role_id
@@ -46,6 +47,7 @@ const queryTable = () => {
   });
 }
 const filterTable = (filterBy, keyword) => {
+    console.clear();
     let table = new Table({ 
       style: {'padding-left':2, 'padding-right':2},
       head:['ID', 'First Name','Last Name', 'Role Title', 'Salary', 'Department'], 
@@ -100,7 +102,7 @@ const promptUser = () => {
         break;
 
       case 'Add Employee':
-
+        promptAddEmployee();
         break;
 
       case 'Remove Employee':
@@ -133,6 +135,23 @@ const promptDepartment = () => {
 
 const promptEmployeeRole = () => {
   inquirer.prompt([
+    {
+      type: 'list',
+      name: 'choice',
+      message: 'What would you like to do?',
+      choices: roleList,
+    },
+  ]).then(ans => {
+    // console.log(JSON.stringify(ans, null, ' '));
+    filterTable('role_title', ans.choice)
+  });  
+}
+
+const promptAddEmployee = () => {
+  inquirer.prompt([
+    {
+
+    },
     {
       type: 'list',
       name: 'choice',
