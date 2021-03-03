@@ -86,6 +86,13 @@ const deleteEmployee = (keyword) => {
   });
 }
 
+const updateEmployeeRole = (roleID, employeeID) => {
+    // UPDATE employee_table SET role_id = 3 WHERE employee_id = 2; 
+    connection.query(`UPDATE employee_table SET role_id = ? WHERE employee_id = ?`, [roleID, employeeID], (err, res) => {
+    if (err) throw err;
+  });
+}
+
 const promptUser = () => {
   inquirer.prompt([
     {
@@ -125,7 +132,7 @@ const promptUser = () => {
         break;
 
       case 'Update Employee Role':
-
+        promptUpdateEmployee();
         break;
 
       default:
@@ -251,4 +258,38 @@ const promptEmployeeRemoval = () => {
   });  
 }
 
+const promptUpdateEmployee = () => {
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'selectEmployee',
+      message: "Which employee would like to update?",
+      choices: employeeList,
+    },
+    {
+      type: 'list',
+      name: 'selectRole',
+      message: 'Select new role title of the employee',
+      choices: roleList,
+    },
+  ]).then(ans => {
+    // console.log(JSON.stringify(ans, null, ' '));
+    let updateRoleID;
+    let updateEmployeeID;
+    employeeData.forEach(item => {
+      if (ans.selectEmployee == item.first_name) {
+        updateEmployeeID = item.employee_id;
+        // console.log(selectManagerID);
+      }
+    });
+    rolesData.forEach(item => {
+      if (ans.selectRole == item.role_title) {
+        updateRoleID = item.role_id;
+        // console.log(selectRoleID);
+      }
+    });
+    updateEmployeeRole(updateRoleID, updateEmployeeID);
+    queryTable();
+  });  
+}
 
